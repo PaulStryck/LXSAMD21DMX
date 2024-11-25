@@ -33,7 +33,7 @@
 
     //***** baud rate defines
     #define DMX_DATA_BAUD   250000
-    #define DMX_BREAK_BAUD  250000
+    #define DMX_BREAK_BAUD  90000
     //99900
 
     //***** states indicate current position in DMX stream
@@ -49,6 +49,7 @@
 
 // **************************** global data (can be accessed in ISR)  ***************
 
+bool state = false;
 
 uint8_t*  _shared_dmx_data;
 uint8_t   _shared_dmx_state;
@@ -142,7 +143,7 @@ void LXSAMD21DMX::setBaudRate(uint32_t baudrate) {
 
     // see SERCOM.initUART
     // TODO: get actual clock speed
-    uint32_t baudTimes8 = (4000000 * 8) / (sampleRateValue * baudrate);
+    uint32_t baudTimes8 = (8000000 * 8) / (sampleRateValue * baudrate);
 
     _hw->USART.BAUD.FRAC.FP   = (baudTimes8 % 8);
     _hw->USART.BAUD.FRAC.BAUD = (baudTimes8 / 8);
@@ -274,6 +275,8 @@ void LXSAMD21DMX::IrqHandler(void) {
 
         if ( _hw->USART.INTFLAG.bit.ERROR ) {
            _hw->USART.INTFLAG.bit.ERROR = 1;     //acknowledge error, clear interrupt
+           // gpio_set_pin_level(PA02, state);
+           state = !state;
 
             if ( _hw->USART.STATUS.bit.FERR ) {  //framing error happens when break is sent
                 _shared_dmx_state = DMX_STATE_BREAK;
@@ -290,7 +293,9 @@ void LXSAMD21DMX::IrqHandler(void) {
         }   //ERR
 
         if ( _hw->USART.INTFLAG.bit.RXC ) {
-        uint8_t incoming_byte = _hw->USART.DATA.reg;             // read buffer to clear interrupt flag
+            // read buffer to clear interrupt flag
+            uint8_t incoming_byte = hri_sercomusart_read_DATA_reg(_hw);
+
             switch ( _shared_dmx_state ) {
                 case DMX_STATE_BREAK:
                     if ( incoming_byte == 0 ) {                                 // start code == zero (DMX)

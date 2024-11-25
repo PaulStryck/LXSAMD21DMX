@@ -71,14 +71,14 @@ TX (4) |----------------------| 4 DI   Gnd 5 |---+------------ Pin 1
             | (0 << SERCOM_USART_CTRLA_IBON_Pos)                        \
             | SERCOM_USART_CTRLA_SAMPR(SAMPLE_RATE_x16)                 \
             | SERCOM_USART_CTRLA_TXPO(1)                                \
-            | SERCOM_USART_CTRLA_RXPO(1)                                \
+            | SERCOM_USART_CTRLA_RXPO(3)                                \
             | SERCOM_USART_CTRLA_SAMPA(0x0)                             \
             | SERCOM_USART_CTRLA_FORM(0)                                \
             | (0 << SERCOM_USART_CTRLA_CMODE_Pos)                       \
             | (0 << SERCOM_USART_CTRLA_CPOL_Pos)                        \
             | (1 << SERCOM_USART_CTRLA_DORD_Pos),                       \
         SERCOM_USART_CTRLB_CHSIZE(0x0)                                  \
-            | (USART_STOP_BITS_ONE << SERCOM_USART_CTRLB_SBMODE_Pos)    \
+            | (USART_STOP_BITS_TWO << SERCOM_USART_CTRLB_SBMODE_Pos)    \
             | (0 << SERCOM_USART_CTRLB_COLDEN_Pos)                      \
             | (0 << SERCOM_USART_CTRLB_SFDE_Pos)                        \
             | (0 << SERCOM_USART_CTRLB_ENC_Pos)                         \
@@ -281,13 +281,13 @@ class LXSAMD21DMX  {
            if you use a different SERCOM
 */
 
-#define PIN_DMX_RX DMX_RX
-#define PIN_DMX_TX DMX_TX
+#define PIN_DMX_RX PA10
+#define PIN_DMX_TX PA11
 #define PAD_DMX_RX PINMUX_PA04D_SERCOM0_PAD0 // TODO
 #define PAD_DMX_TX PINMUX_PA05D_SERCOM0_PAD1 // TODO
 
 // Set to PIO_SERCOM or PIO_SERCOM_ALT
-#define MUX_DMX_RX PINMUX_PA05D_SERCOM0_PAD1
-#define MUX_DMX_TX PINMUX_PA06D_SERCOM0_PAD2
+#define MUX_DMX_RX PINMUX_PA10C_SERCOM0_PAD2
+#define MUX_DMX_TX PINMUX_PA11C_SERCOM0_PAD3
 
 #endif // ifndef LXSAM21_DMX_H
